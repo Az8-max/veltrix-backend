@@ -10,7 +10,25 @@ if DATABASE_URL:
     # SQLAlchemy 1.4+ requires "postgresql://" instead of "postgres://"
     if DATABASE_URL.startswith("postgres://"):
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
-    engine = create_engine(DATABASE_URL)
+
+    # Render free tier resolves to IPv6 which Supabase doesn't support.
+    # Use the Supabase Session pooler (port 5432 -> 6543) if available,
+    # or force IPv4 resolution.
+    import socket
+    _original_getaddrinfo = socket.getaddrinfo
+    def _ipv4_only_getaddrinfo(*args, **kwargs):
+        """Force IPv4 so Render can reach Supabase."""
+        responses = _original_getaddrinfo(*args, **kwargs)
+        return [r for r in responses if r[0] == socket.AF_INET] or responses
+    socket.getaddrinfo = _ipv4_only_getaddrinfo
+
+    engine = create_engine(
+        DATABASE_URL,
+        pool_pre_ping=True,
+        pool_size=5,
+        max_overflow=10,
+        pool_recycle=300,
+    )
 else:
     # Local SQLite fallback
     SQLALCHEMY_DATABASE_URL = "sqlite:///./leads.db"
