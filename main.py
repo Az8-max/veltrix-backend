@@ -51,10 +51,36 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+from starlette.requests import Request
+from starlette.responses import JSONResponse
+import traceback
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """Catch unhandled exceptions so they return JSON with CORS headers."""
+    logger.error(f"Unhandled error on {request.method} {request.url}: {exc}")
+    logger.error(traceback.format_exc())
+    return JSONResponse(
+        status_code=500,
+        content={"detail": str(exc)},
+    )
 
 @app.get("/")
 def root():
     return {"status": "ok", "service": "Veltrix API"}
+
+@app.get("/api/debug/db")
+def debug_db(db: Session = Depends(get_db)):
+    """Check if the database is working and tables exist."""
+    try:
+        from sqlalchemy import text, inspect
+        inspector = inspect(engine)
+        tables = inspector.get_table_names()
+        user_count = db.execute(text("SELECT COUNT(*) FROM users")).scalar() if "users" in tables else "table missing"
+        lead_count = db.execute(text("SELECT COUNT(*) FROM leads")).scalar() if "leads" in tables else "table missing"
+        return {"tables": tables, "users": user_count, "leads": lead_count, "db_url_prefix": str(engine.url)[:30]}
+    except Exception as e:
+        return {"error": str(e)}
 
 # --- AUTH ROUTES ---
 
