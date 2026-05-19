@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+httpx
+pydantic
+beautifulsoup4
+python-dotenv
+sqlalchemy
+bcrypt
+python-jose[cryptography]
+psycopg2-binary
+faker

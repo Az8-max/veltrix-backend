@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+leads.db
+.env
+.env.local
+.env*.local
+.vercel
+node_modules/
+dist/
