@@ -472,6 +472,8 @@ def get_signals_feed(
             "description": sig.description,
             "url": sig.url,
             "score": sig.score,
+            "confidence_score": getattr(sig, "confidence_score", 100),
+            "raw_company_name": getattr(sig, "raw_company_name", None),
             "created_at": sig.created_at.isoformat() if sig.created_at else None,
         })
     

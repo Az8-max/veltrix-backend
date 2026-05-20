@@ -113,6 +113,8 @@ class IntentSignal(Base):
     description = Column(String, nullable=True)
     url = Column(String, nullable=True)
     score = Column(Integer, default=50)
+    confidence_score = Column(Integer, default=100) # How confident we are in the fuzzy match
+    raw_company_name = Column(String, nullable=True) # The raw company name from the scraped signal
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
 
     lead = relationship("FirmLead", back_populates="signals")

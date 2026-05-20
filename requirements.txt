@@ -9,3 +9,6 @@ bcrypt
 python-jose[cryptography]
 psycopg2-binary
 faker
+duckduckgo-search>=5.2.1
+thefuzz
+python-Levenshtein

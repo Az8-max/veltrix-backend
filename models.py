@@ -31,6 +31,8 @@ class IntentSignalResponse(BaseModel):
     description: Optional[str] = None
     url: Optional[str] = None
     score: int
+    confidence_score: int
+    raw_company_name: Optional[str] = None
     created_at: datetime
 
     class Config:
