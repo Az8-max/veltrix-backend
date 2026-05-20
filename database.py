@@ -8,10 +8,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if DATABASE_URL:
     # Supabase/Postgres deployment
     # SQLAlchemy 1.4+ requires "postgresql://" instead of "postgres://"
-    if DATABASE_URL.startswith("postgres://"):
-        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
-
-    # Auto-fix Supabase pooler URL if the username is missing the project ID
+    DATABASE_URL = "postgresql://postgres.bbqxvmwaepjmkggwsems:Azaanzahid%40123@aws-1-ap-northeast-2.pooler.supabase.com:5432/postgres"
     if "pooler.supabase.com" in DATABASE_URL and "postgres:" in DATABASE_URL:
         # If they just copied 'postgres' as the username, append the project ID
         DATABASE_URL = DATABASE_URL.replace("postgres:", "postgres.bbqxvmwaepjmkggwsems:", 1)
