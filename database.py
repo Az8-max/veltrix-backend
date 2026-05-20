@@ -11,6 +11,12 @@ if DATABASE_URL:
     if DATABASE_URL.startswith("postgres://"):
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
+    # Auto-fix Supabase pooler URL if the username is missing the project ID
+    if "pooler.supabase.com" in DATABASE_URL and "postgres:" in DATABASE_URL:
+        # If they just copied 'postgres' as the username, append the project ID
+        DATABASE_URL = DATABASE_URL.replace("postgres:", "postgres.bbqxvmwaepjmkggwsems:", 1)
+        print("Auto-corrected Supabase pooler username to include project ID.")
+
     # Render free tier resolves to IPv6 which Supabase doesn't support.
     # Use the Supabase Session pooler (port 5432 -> 6543) if available,
     # or force IPv4 resolution.
